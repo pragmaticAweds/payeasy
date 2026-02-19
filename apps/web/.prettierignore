@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+build/
+dist/
+out/
+
+# Cache
+.turbo/
+.cache/
+
+# Misc
+coverage/
+*.log
+.DS_Store

@@ -18,6 +18,8 @@ export type Listing = {
   rent_xlm: number
   bedrooms: number
   bathrooms: number
+  latitude?: number
+  longitude?: number
   is_available: boolean
   images: string[]
   amenities: string[]

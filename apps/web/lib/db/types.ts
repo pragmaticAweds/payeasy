@@ -31,6 +31,7 @@ export interface ListingSearchParams {
   bathrooms?: number
   amenities?: string[] // comma-separated or array
   search?: string // full-text search query
+  bbox?: string // "west,south,east,north" bounding box for map view
   sortBy?: 'price' | 'created_at' | 'bedrooms' | 'bathrooms'
   order?: 'asc' | 'desc'
   page?: number

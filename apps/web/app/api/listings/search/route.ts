@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
         ? searchParams.get('amenities')!.split(',').map((a) => a.trim())
         : undefined,
       search: searchParams.get('search') || undefined,
+      bbox: searchParams.get('bbox') || undefined,
       sortBy: (searchParams.get('sortBy') as 'price' | 'created_at' | 'bedrooms' | 'bathrooms') || 'created_at',
       order: (searchParams.get('order') as 'asc' | 'desc') || 'desc',
       page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
@@ -83,6 +84,19 @@ export async function GET(request: NextRequest) {
         }
       } else {
         query = query.ilike('address', `%${params.location}%`)
+      }
+    }
+
+    // Bounding box filtering for map view
+    if (params.bbox) {
+      const coords = params.bbox.split(',').map(Number)
+      if (coords.length === 4 && coords.every((c) => !isNaN(c))) {
+        const [west, south, east, north] = coords
+        query = query
+          .gte('longitude', west)
+          .lte('longitude', east)
+          .gte('latitude', south)
+          .lte('latitude', north)
       }
     }
 

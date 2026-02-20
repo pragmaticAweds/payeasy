@@ -48,6 +48,36 @@ export type PaymentRecord = {
   created_at: string;
 };
 
+export type ContractTransactionStatus =
+  | "pending_signature"
+  | "signed"
+  | "submitted"
+  | "pending"
+  | "success"
+  | "failed"
+  | "cancelled";
+
+export type ContractTransaction = {
+  id: string;
+  user_id: string;
+  listing_id: string | null;
+  contract_id: string;
+  method: string;
+  wallet_address: string;
+  network: string;
+  status: ContractTransactionStatus;
+  tx_hash: string | null;
+  fee_stroops: number | null;
+  gas_estimate: number | null;
+  request_xdr: string | null;
+  signed_xdr: string | null;
+  result_xdr: string | null;
+  error_message: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
 export type RentAgreement = {
   id: string;
   listing_id: string;

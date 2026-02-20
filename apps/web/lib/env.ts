@@ -5,6 +5,9 @@ const serverSchema = z.object({
   DATABASE_URL: z.string().min(1, "Database URL is required"),
   JWT_SECRET: z.string().min(32, "JWT secret must be at least 32 characters"),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  STELLAR_HORIZON_URL: z.string().url("Stellar Horizon URL must be valid").optional(),
+  SOROBAN_RPC_URL: z.string().url("Soroban RPC URL must be valid").optional(),
+  STELLAR_NETWORK_PASSPHRASE: z.string().optional(),
 });
 
 const clientSchema = z.object({
@@ -12,6 +15,15 @@ const clientSchema = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, "Supabase anon key is required"),
   NEXT_PUBLIC_STELLAR_NETWORK: z.string().default("testnet"),
   NEXT_PUBLIC_FREIGHTER_NETWORK: z.string().default("testnet"),
+  NEXT_PUBLIC_STELLAR_HORIZON_URL: z
+    .string()
+    .url("Public Stellar Horizon URL must be valid")
+    .optional(),
+  NEXT_PUBLIC_SOROBAN_RPC_URL: z
+    .string()
+    .url("Public Soroban RPC URL must be valid")
+    .optional(),
+  NEXT_PUBLIC_STELLAR_NETWORK_PASSPHRASE: z.string().optional(),
 });
 
 const envSchema = serverSchema.merge(clientSchema);
@@ -25,10 +37,16 @@ const getEnvVars = () => {
       DATABASE_URL: process.env.DATABASE_URL,
       JWT_SECRET: process.env.JWT_SECRET,
       NODE_ENV: process.env.NODE_ENV,
+      STELLAR_HORIZON_URL: process.env.STELLAR_HORIZON_URL,
+      SOROBAN_RPC_URL: process.env.SOROBAN_RPC_URL,
+      STELLAR_NETWORK_PASSPHRASE: process.env.STELLAR_NETWORK_PASSPHRASE,
       NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
       NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       NEXT_PUBLIC_STELLAR_NETWORK: process.env.NEXT_PUBLIC_STELLAR_NETWORK,
       NEXT_PUBLIC_FREIGHTER_NETWORK: process.env.NEXT_PUBLIC_FREIGHTER_NETWORK,
+      NEXT_PUBLIC_STELLAR_HORIZON_URL: process.env.NEXT_PUBLIC_STELLAR_HORIZON_URL,
+      NEXT_PUBLIC_SOROBAN_RPC_URL: process.env.NEXT_PUBLIC_SOROBAN_RPC_URL,
+      NEXT_PUBLIC_STELLAR_NETWORK_PASSPHRASE: process.env.NEXT_PUBLIC_STELLAR_NETWORK_PASSPHRASE,
     };
   }
 
@@ -37,6 +55,9 @@ const getEnvVars = () => {
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_STELLAR_NETWORK: process.env.NEXT_PUBLIC_STELLAR_NETWORK,
     NEXT_PUBLIC_FREIGHTER_NETWORK: process.env.NEXT_PUBLIC_FREIGHTER_NETWORK,
+    NEXT_PUBLIC_STELLAR_HORIZON_URL: process.env.NEXT_PUBLIC_STELLAR_HORIZON_URL,
+    NEXT_PUBLIC_SOROBAN_RPC_URL: process.env.NEXT_PUBLIC_SOROBAN_RPC_URL,
+    NEXT_PUBLIC_STELLAR_NETWORK_PASSPHRASE: process.env.NEXT_PUBLIC_STELLAR_NETWORK_PASSPHRASE,
   };
 };
 

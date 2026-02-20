@@ -18,7 +18,16 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "cd apps/web && npm run dev",
+    "build": "cd apps/web && npm run build",
+    "start": "cd apps/web && npm run start",
+    "lint": "cd apps/web && npm run lint",
+    "format": "cd apps/web && npm run format",
+    "test": "echo \"No tests specified yet\"",
+    "install:web": "cd apps/web && npm install",
+    "build:contract": "cd apps/web && npm run build:contract",
+    "deploy:contract": "cd apps/web && npm run deploy:contract",
+    "verify:contract": "cd apps/web && npm run verify:contract"
   },
   "devDependencies": {}
 }

@@ -22,10 +22,12 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          cd apps/web && npm ci
 
       - name: Run tests
-        run: npm run test --if-present
+        run: npm run test
 
       # ── Codecov (uncomment when tests are in place) ──
       # - name: Upload coverage to Codecov

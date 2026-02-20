@@ -1,13 +1,13 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 export function createServerClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !supabaseServiceKey) {
     throw new Error(
-      'Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY'
-    )
+      "Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY"
+    );
   }
 
   return createClient(supabaseUrl, supabaseServiceKey, {
@@ -15,14 +15,14 @@ export function createServerClient() {
       autoRefreshToken: false,
       persistSession: false,
     },
-  })
+  });
 }
 
-let serverClient: SupabaseClient | null = null
+let serverClient: SupabaseClient | null = null;
 
 export function getServerClient() {
   if (!serverClient) {
-    serverClient = createServerClient()
+    serverClient = createServerClient();
   }
-  return serverClient
+  return serverClient;
 }

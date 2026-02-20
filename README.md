@@ -140,6 +140,16 @@ payeasy/
    soroban contract build
    ```
 
+6. **Deploy the smart contract**
+   Ensure `DEPLOYER_SECRET_KEY` is set in your `apps/web/.env.local`.
+   ```bash
+   npm run deploy:contract
+   ```
+   To verify it exists:
+   ```bash
+   npm run verify:contract <INSERT_CONTRACT_ID>
+   ```
+
 For detailed setup instructions, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---

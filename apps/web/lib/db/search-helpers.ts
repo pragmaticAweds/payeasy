@@ -1,16 +1,15 @@
-
 export function parseRadius(radius: string): number {
-  const match = radius.match(/^(\d+(?:\.\d+)?)\s*(km|m)?$/i)
+  const match = radius.match(/^(\d+(?:\.\d+)?)\s*(km|m)?$/i);
   if (!match) {
-    throw new Error(`Invalid radius format: ${radius}. Expected format: "5km" or "5000m"`)
+    throw new Error(`Invalid radius format: ${radius}. Expected format: "5km" or "5000m"`);
   }
-  
-  let meters = parseFloat(match[1])
-  if (match[2]?.toLowerCase() === 'km') {
-    meters *= 1000
+
+  let meters = parseFloat(match[1]);
+  if (match[2]?.toLowerCase() === "km") {
+    meters *= 1000;
   }
-  
-  return meters
+
+  return meters;
 }
 
 export function buildPostGISLocationCondition(
@@ -26,7 +25,7 @@ export function buildPostGISLocationCondition(
       $${paramIndex + 2}
     )`,
     params: [lng, lat, radiusMeters],
-  }
+  };
 }
 
 export function buildFullTextSearchCondition(
@@ -37,10 +36,10 @@ export function buildFullTextSearchCondition(
   const tsQuery = searchTerm
     .split(/\s+/)
     .map((word) => `${word}:*`)
-    .join(' & ')
-  
+    .join(" & ");
+
   return {
     sql: `to_tsvector('english', title || ' ' || description) @@ to_tsquery('english', $${paramIndex})`,
     params: [tsQuery],
-  }
+  };
 }

@@ -14,7 +14,9 @@
         "build:contract": "cd ../../contracts/rent-escrow && soroban contract build",
         "test": "jest",
         "test:watch": "jest --watch",
-        "test:coverage": "jest --coverage"
+        "test:coverage": "jest --coverage",
+        "test:perf": "jest __tests__/performance/ --passWithNoTests",
+        "lh:ci": "lhci autorun"
     },
     "dependencies": {
         "@hookform/resolvers": "^5.2.2",
@@ -44,6 +46,7 @@
         "zod": "^4.3.6"
     },
     "devDependencies": {
+        "@lhci/cli": "^0.15.1",
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.2",
         "@testing-library/user-event": "^14.6.1",
@@ -56,6 +59,7 @@
         "@types/react": "^18",
         "@types/react-dom": "^18",
         "autoprefixer": "^10.0.1",
+        "cross-env": "^10.1.0",
         "dotenv": "^17.3.1",
         "eslint": "^8",
         "eslint-config-next": "14.0.3",

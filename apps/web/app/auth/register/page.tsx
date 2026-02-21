@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import { setAllowed, getPublicKey } from '@stellar/freighter-api';
-import { Wallet, ArrowLeftCircle } from 'lucide-react';
-import Link from 'next/link';
+import { ArrowLeftCircle, Wallet } from "lucide-react";
+import { RegisterFormData, registerSchema } from "@/lib/validators/auth";
+import { getPublicKey, setAllowed } from "@stellar/freighter-api";
 
-import { createClient } from '@/lib/supabaseClient';
-import { registerSchema, RegisterFormData } from '@/lib/validators/auth';
-import AuthInput from '@/components/forms/AuthInput';
-import AuthButton from '@/components/forms/AuthButton';
-import FormError from '@/components/forms/FormError';
+import AuthButton from "@/components/forms/AuthButton";
+import AuthInput from "@/components/forms/AuthInput";
+import FormError from "@/components/forms/FormError";
+import Link from "next/link";
+import { createClient } from "@/lib/supabaseClient";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | undefined>('');
+  const [error, setError] = useState<string | undefined>("");
   const [isWalletConnecting, setIsWalletConnecting] = useState(false);
   const supabase = createClient();
 
@@ -28,10 +28,10 @@ export default function RegisterPage() {
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    mode: 'onChange',
+    mode: "onChange",
   });
 
-  const walletAddress = watch('walletAddress');
+  const walletAddress = watch("walletAddress");
 
   const connectWallet = async () => {
     setIsWalletConnecting(true);
@@ -39,19 +39,19 @@ export default function RegisterPage() {
       const allowed = await setAllowed();
       if (allowed) {
         const key = await getPublicKey();
-        setValue('walletAddress', key);
+        setValue("walletAddress", key);
       } else {
-        setError('Wallet access denied');
+        setError("Wallet access denied");
       }
     } catch (e) {
-      setError('Failed to connect wallet');
+      setError("Failed to connect wallet");
     } finally {
       setIsWalletConnecting(false);
     }
   };
 
   const onSubmit = async (data: RegisterFormData) => {
-    setError('');
+    setError("");
     try {
       // 1. Sign up user
       const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -72,31 +72,32 @@ export default function RegisterPage() {
 
       if (authData.user) {
         // 2. Create profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: authData.user.id,
-            username: data.username,
-            email: data.email,
-            wallet_address: data.walletAddress,
-          });
+        const { error: profileError } = await supabase.from("profiles").insert({
+          id: authData.user.id,
+          username: data.username,
+          email: data.email,
+          wallet_address: data.walletAddress,
+        });
 
         if (profileError) {
           setError(profileError.message);
           return;
         }
 
-        router.push('/dashboard');
+        router.push("/dashboard");
         router.refresh();
       }
     } catch (e) {
-      setError('Something went wrong');
+      setError("Something went wrong");
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 dark:bg-gray-900 sm:px-6 lg:px-8 relative">
-      <Link href="/browse" className="absolute top-8 left-8 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+    <div className="relative flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8 dark:bg-gray-900">
+      <Link
+        href="/browse"
+        className="absolute left-8 top-8 text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+      >
         <ArrowLeftCircle className="h-8 w-8" />
       </Link>
       <div className="w-full max-w-md space-y-8">
@@ -105,7 +106,7 @@ export default function RegisterPage() {
             Create your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link
               href="/auth/login"
               className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
@@ -124,7 +125,7 @@ export default function RegisterPage() {
                 type="text"
                 placeholder="johndoe"
                 error={errors.username?.message}
-                register={register('username')}
+                register={register("username")}
               />
 
               <AuthInput
@@ -133,7 +134,7 @@ export default function RegisterPage() {
                 type="email"
                 placeholder="john@example.com"
                 error={errors.email?.message}
-                register={register('email')}
+                register={register("email")}
               />
 
               <AuthInput
@@ -142,7 +143,7 @@ export default function RegisterPage() {
                 type="password"
                 placeholder="••••••••"
                 error={errors.password?.message}
-                register={register('password')}
+                register={register("password")}
               />
 
               <div className="space-y-2">
@@ -159,11 +160,11 @@ export default function RegisterPage() {
                   {walletAddress
                     ? `Connected: ${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}`
                     : isWalletConnecting
-                    ? 'Connecting...'
-                    : 'Connect Freighter Wallet'}
+                      ? "Connecting..."
+                      : "Connect Freighter Wallet"}
                 </button>
                 {errors.walletAddress && (
-                   <p className="text-sm text-red-600">{errors.walletAddress.message}</p>
+                  <p className="text-sm text-red-600">{errors.walletAddress.message}</p>
                 )}
               </div>
 

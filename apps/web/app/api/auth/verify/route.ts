@@ -1,10 +1,11 @@
-import { NextResponse } from "next/server";
 import {
     buildMessage,
     isTimestampValid,
     signJwt,
     verifySignature,
 } from "@/lib/auth/stellar-auth";
+
+import { NextResponse } from "next/server";
 
 /** Cookie max-age in seconds (24 hours). */
 const COOKIE_MAX_AGE = 86_400;
@@ -15,7 +16,7 @@ const COOKIE_MAX_AGE = 86_400;
  * Accepts `{ publicKey, signature, nonce, timestamp }`, verifies the Stellar
  * signature, and returns a JWT token stored in a secure HTTP-only cookie.
  */
-export async function POST(request: Request) {
+export async function POST (request: Request) {
     try {
         const body = await request.json();
         const { publicKey, signature, nonce, timestamp } = body;
@@ -65,7 +66,7 @@ export async function POST(request: Request) {
 
         const response = NextResponse.json({
             success: true,
-            data: { publicKey },
+            data: { publicKey, token },
         });
 
         // Set the JWT in a secure HTTP-only cookie

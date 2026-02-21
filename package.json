@@ -20,5 +20,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {}
+  "dependencies": {
+    "@upstash/redis": "^1.36.2"
+  }
 }

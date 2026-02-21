@@ -25,6 +25,6 @@
     "typeRoots": ["./node_modules/@types"],
     "types": ["node", "geojson", "mapbox__point-geometry"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "lib/dauth.ts"],
   "exclude": ["node_modules"]
 }

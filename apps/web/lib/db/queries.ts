@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import type { UserProfile, Listing, ContractTransaction } from '@/lib/types/superbase';
+import type { UserProfile, Listing, ContractTransaction } from '@/lib/types/supabase';
 
 export async function getUserById(supabase: SupabaseClient, id: string): Promise<UserProfile> {
     const { data, error } = await supabase

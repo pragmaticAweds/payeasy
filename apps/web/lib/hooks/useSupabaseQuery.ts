@@ -49,7 +49,6 @@ export function useSupabaseQuery<T>(
     }
 
     fetchData()
-  }, dependencies)
   }, [table, query, ...(dependencies ?? [])])
 
   return { data, loading, error }
@@ -131,6 +130,4 @@ export function useSupabaseDelete(table: string) {
   }
 
   return { delete: delete_, loading, error }
-}
-}
 }

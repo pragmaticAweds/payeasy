@@ -23,14 +23,6 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
-    },
-    // Add these two lines if the error doesn't go away:
-    "typeRoots": ["./node_modules/@types"],
-    "types": ["node", "geojson", "mapbox__point-geometry"]
-  },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
       "@/*": [
         "./*"
       ]
@@ -49,7 +41,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

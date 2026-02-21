@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import type { UserProfile, Listing } from '@/lib/types/superbase';
+import type { UserProfile, Listing } from '@/lib/types/supabase';
 
 export async function createUser(supabase: SupabaseClient, userData: Partial<UserProfile>): Promise<UserProfile> {
     const { data, error } = await supabase

@@ -155,6 +155,28 @@ For detailed setup instructions, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
+## E2E Testing
+
+PayEasy uses [Playwright](https://playwright.dev/) for end-to-end testing.
+
+```bash
+# Install Playwright browsers (first time)
+npx playwright install
+
+# Run all E2E tests
+npm run test:e2e
+
+# Run with interactive UI
+npm run test:e2e:ui
+```
+
+Tests cover the following user flows:
+- **Auth** — login form, registration, validation, navigation
+- **Listings** — browse page, filters, view toggle, search
+- **Messages** — conversation rendering, sending, error handling
+
+---
+
 ## Documentaton
 
 - **[Architecture Overview](./docs/ARCHITECTURE.md)**: Deep dive into system design

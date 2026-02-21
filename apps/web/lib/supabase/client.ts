@@ -1,15 +1,28 @@
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient as createSupabaseBrowserClient } from "@supabase/ssr";
 
-// Client-side Supabase client with anon key (respects RLS)
+let browserClient: ReturnType<typeof createSupabaseBrowserClient> | null = null;
+
 export function createBrowserClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error(
-      "Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY"
-    );
+  if (!supabaseUrl || !supabaseKey) {
+    console.warn("Missing Supabase environment variables. Using empty strings for build purposes.");
   }
 
-  return createClient(supabaseUrl, supabaseAnonKey);
+  return createSupabaseBrowserClient(supabaseUrl || "http://localhost:54321", supabaseKey || "dummy_key");
+}
+
+// Alias for backward compatibility
+export const createClient = createBrowserClient;
+
+export function getSupabaseClient() {
+  if (!browserClient) {
+    browserClient = createBrowserClient();
+  }
+  return browserClient;
+}
+
+export function resetClientInstance() {
+  browserClient = null;
 }

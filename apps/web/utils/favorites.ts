@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/superbase/server'
+import { createClient } from '@/lib/supabase/server'
 import type { FavoritedListing } from '@/lib/types/favorites'
 
 /**

@@ -4,6 +4,8 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import freighterApi from "@stellar/freighter-api";
 import { CheckCircle2, AlertCircle } from "lucide-react";
+import { useWallet } from "@/hooks/useWallet";
+import { signBlobWithFreighter } from "@/lib/stellar/freighter";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -11,7 +13,6 @@ import { CheckCircle2, AlertCircle } from "lucide-react";
 
 type LoginState =
     | "idle"
-    | "connecting"
     | "requesting-challenge"
     | "signing"
     | "verifying"
@@ -24,6 +25,9 @@ const STATUS_LABELS: Record<LoginState, string> = {
     "requesting-challenge": "Requesting challenge...",
     signing: "Please sign in wallet...",
     verifying: "Verifying signature...",
+    "requesting-challenge": "Requesting challenge…",
+    signing: "Waiting for signature…",
+    verifying: "Verifying…",
     success: "Signed in ✓",
     error: "Try again",
 };
@@ -33,26 +37,28 @@ const STATUS_LABELS: Record<LoginState, string> = {
 // ---------------------------------------------------------------------------
 
 export default function LoginButton() {
+    const { isConnected, publicKey, isInitializing, status: walletStatus, connect } = useWallet();
     const [state, setState] = useState<LoginState>("idle");
     const [error, setError] = useState<string | null>(null);
     const [publicKey, setPublicKey] = useState<string | null>(null);
     const router = useRouter();
+    const [signedInKey, setSignedInKey] = useState<string | null>(null);
 
     const handleLogin = useCallback(async () => {
         try {
             setError(null);
 
-            // 1 — Connect wallet -----------------------------------------------
-            setState("connecting");
+            // 1 — Ensure wallet is connected via context ----------------------
+            let userPublicKey = publicKey;
 
-            const connected = await freighterApi.isConnected();
-            if (!connected) {
-                throw new Error(
-                    "Freighter wallet not found. Please install the Freighter browser extension."
-                );
+            if (!isConnected || !userPublicKey) {
+                await connect();
+                // After connect resolves, the context will update, but we need the key now.
+                // Re-read from the freighter wrapper directly for this flow.
+                const { getFreighterPublicKey } = await import("@/lib/stellar/freighter");
+                userPublicKey = await getFreighterPublicKey();
             }
 
-            const userPublicKey = await freighterApi.getPublicKey();
             if (!userPublicKey) {
                 throw new Error("Could not retrieve public key from Freighter.");
             }
@@ -76,13 +82,8 @@ export default function LoginButton() {
             // 3 — Sign the challenge message -----------------------------------
             setState("signing");
 
-            // Encode the challenge message as base64 for signBlob
             const messageBase64 = btoa(challenge.message);
-            const signedBase64 = await freighterApi.signBlob(messageBase64);
-
-            if (!signedBase64) {
-                throw new Error("Signing was cancelled or returned empty.");
-            }
+            const signedBase64 = await signBlobWithFreighter(messageBase64);
 
             // 4 — Send signature for verification ------------------------------
             setState("verifying");
@@ -104,7 +105,7 @@ export default function LoginButton() {
             }
 
             // 5 — Success! Cookie is set automatically by the response ----------
-            setPublicKey(userPublicKey);
+            setSignedInKey(userPublicKey);
             setState("success");
 
             // Optionally reload the page so protected routes become accessible
@@ -115,9 +116,35 @@ export default function LoginButton() {
                 err instanceof Error ? err.message : "An unexpected error occurred."
             );
         }
-    }, []);
+    }, [isConnected, publicKey, connect]);
 
     const isLoading = !["idle", "success", "error"].includes(state);
+
+    // Show skeleton while wallet is initializing
+    if (isInitializing) {
+        return (
+            <div className="flex flex-col items-center gap-3">
+                <div className="h-12 w-48 animate-pulse rounded-xl border border-white/10 bg-white/5" />
+            </div>
+        );
+    }
+
+    // If wallet not installed, show install prompt
+    if (walletStatus === "not-installed") {
+        return (
+            <div className="flex flex-col items-center gap-3">
+                <a
+                    href="https://www.freighter.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold border border-white/10 bg-white/5 text-white backdrop-blur-sm transition-all duration-300 hover:border-indigo-500/50 hover:bg-indigo-500/10 hover:shadow-lg hover:shadow-indigo-500/10"
+                >
+                    <WalletIcon />
+                    Install Freighter Wallet
+                </a>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col items-center gap-3">
@@ -143,24 +170,7 @@ export default function LoginButton() {
                 )}
 
                 {/* Wallet icon */}
-                <svg
-                    className={`h-4 w-4 ${isLoading ? "animate-pulse" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 110-6h3.75A2.25 2.25 0 0021 6V4.5A2.25 2.25 0 0018.75 2.25H5.25A2.25 2.25 0 003 4.5v15A2.25 2.25 0 005.25 21.75h13.5A2.25 2.25 0 0021 19.5V12z"
-                    />
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 9.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-                    />
-                </svg>
+                <WalletIcon className={isLoading ? "animate-pulse" : ""} />
 
                 {STATUS_LABELS[state]}
 
@@ -190,9 +200,9 @@ export default function LoginButton() {
             </button>
 
             {/* Public key badge */}
-            {publicKey && state === "success" && (
+            {signedInKey && state === "success" && (
                 <span className="rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 py-1 text-xs text-emerald-400">
-                    {publicKey.slice(0, 6)}…{publicKey.slice(-4)}
+                    {signedInKey.slice(0, 6)}…{signedInKey.slice(-4)}
                 </span>
             )}
 
@@ -201,5 +211,28 @@ export default function LoginButton() {
                 <p className="max-w-xs text-center text-xs text-red-400/80">{error}</p>
             )}
         </div>
+    );
+}
+
+function WalletIcon({ className = "" }: { className?: string }) {
+    return (
+        <svg
+            className={`h-4 w-4 ${className}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+        >
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 110-6h3.75A2.25 2.25 0 0021 6V4.5A2.25 2.25 0 0018.75 2.25H5.25A2.25 2.25 0 003 4.5v15A2.25 2.25 0 005.25 21.75h13.5A2.25 2.25 0 0021 19.5V12z"
+            />
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 9.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+            />
+        </svg>
     );
 }

@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/superbase/client";
-import { createAdminClient } from "@/lib/superbase/admin";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 
 // User logs a new pending payment

@@ -58,6 +58,11 @@ export interface UserRow {
   bio: string | null
   created_at: ISOTimestamp
   updated_at: ISOTimestamp
+  images?: string[]
+  landlord?: {
+    username: string | null
+    avatar_url: string | null
+  }
 }
 
 /** Domain-layer user (optional fields instead of nulls). */

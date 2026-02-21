@@ -67,6 +67,7 @@ export default function FavoritesProvider({ children }: { children: React.ReactN
     async (listingId: string) => {
       if (!isAuthenticated) {
         router.push('/login')
+        window.location.href = '/auth/login'
         return
       }
 

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { Horizon } from "stellar-sdk";
-import { createClient } from "@/lib/superbase/client";
+import { createClient } from "@/lib/supabase/server";
 import { getStellarNetworkConfig } from "@/lib/stellar/network";
-import type { ContractTransactionStatus } from "@/lib/types/superbase";
+import type { ContractTransactionStatus } from "@/lib/types/supabase";
 
 function resolveOnchainStatus(successful: boolean): ContractTransactionStatus {
   return successful ? "success" : "failed";

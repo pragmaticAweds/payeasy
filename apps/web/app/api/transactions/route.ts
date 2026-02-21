@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/superbase/client";
-import type { ContractTransactionStatus } from "@/lib/types/superbase";
+import { createClient } from "@/lib/supabase/server";
+import type { ContractTransactionStatus } from "@/lib/types/supabase";
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 

@@ -8,6 +8,7 @@
         "start": "next start",
         "lint": "next lint",
         "format": "prettier --write .",
+        "test": "vitest run",
         "deploy:contract": "tsx scripts/deploy.ts",
         "verify:contract": "tsx scripts/verify.ts",
         "build:contract": "cd ../../contracts/rent-escrow && soroban contract build",
@@ -36,6 +37,7 @@
         "react-hook-form": "^7.71.1",
         "react-map-gl": "^7.1.9",
         "react-select": "^5.10.2",
+        "sharp": "^0.34.5",
         "stellar-sdk": "^11.0.0",
         "supercluster": "^8.0.1",
         "tailwind-merge": "^2.0.0",
@@ -46,7 +48,10 @@
         "@testing-library/react": "^16.3.2",
         "@testing-library/user-event": "^14.6.1",
         "@types/jest": "^30.0.0",
+        "@testing-library/react": "^16.3.2",
+        "@types/geojson": "^7946.0.16",
         "@types/jsonwebtoken": "^9.0.10",
+        "@types/mapbox__point-geometry": "^0.1.4",
         "@types/node": "^20",
         "@types/react": "^18",
         "@types/react-dom": "^18",
@@ -63,6 +68,7 @@
         "tailwindcss": "^3.3.0",
         "ts-jest": "^29.4.6",
         "tsx": "^4.21.0",
-        "typescript": "^5"
+        "typescript": "^5",
+        "vitest": "^4.0.18"
     }
 }

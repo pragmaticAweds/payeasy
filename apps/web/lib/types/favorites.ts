@@ -1,4 +1,4 @@
-import type { Listing } from './superbase'
+import type { Listing } from './supabase'
 
 /** Row from the user_favorites table */
 export type UserFavorite = {

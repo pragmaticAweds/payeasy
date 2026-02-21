@@ -94,6 +94,8 @@ export interface ListingSearchParams {
   location?: string
   /** Bounding radius around `location`, e.g. "5km" or "500m". */
   radius?: string
+  /** Bounding box for map view: "west,south,east,north" (e.g. "-122.5,37.7,-122.3,37.8") */
+  bbox?: string
   bedrooms?: number
   bathrooms?: number
   furnished?: boolean
@@ -102,6 +104,7 @@ export interface ListingSearchParams {
   amenities?: string[]
   /** Full-text search query across title and description. */
   search?: string
+
   sortBy?: 'price' | 'created_at' | 'bedrooms' | 'bathrooms'
   order?: 'asc' | 'desc'
   page?: number

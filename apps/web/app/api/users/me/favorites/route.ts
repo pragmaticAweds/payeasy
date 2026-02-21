@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/superbase/server'
+import { createClient } from '@/lib/supabase/server'
 import { successResponse, errorResponse } from '@/lib/api-utils'
 
 /** GET — Return all of the authenticated user's favorite listings */

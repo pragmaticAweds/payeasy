@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeftCircle } from 'lucide-react';
 
-import { createClient } from '@/lib/supabaseClient';
+import { createClient } from '@/lib/supabase/client';
 import { loginSchema, LoginFormData } from '@/lib/validators/auth';
 import AuthInput from '@/components/forms/AuthInput';
 import AuthButton from '@/components/forms/AuthButton';

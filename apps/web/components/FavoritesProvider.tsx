@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
-import { createClient } from '@/lib/superbase/client'
+import { createClient } from '@/lib/supabase/client'
 
 type FavoritesContextValue = {
   isFavorited: (listingId: string) => boolean
@@ -64,7 +64,7 @@ export default function FavoritesProvider({ children }: { children: React.ReactN
   const toggleFavorite = useCallback(
     async (listingId: string) => {
       if (!isAuthenticated) {
-        window.location.href = '/login'
+        window.location.href = '/auth/login'
         return
       }
 

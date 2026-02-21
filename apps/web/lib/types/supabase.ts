@@ -10,22 +10,22 @@ export type UserProfile = {
 };
 
 export type Listing = {
-  id: string
-  landlord_id: string
-  title: string
-  description: string | null
-  address: string
-  rent_xlm: number
-  bedrooms: number
-  bathrooms: number
-  latitude?: number
-  longitude?: number
-  is_available: boolean
-  images: string[]
-  amenities: string[]
-  created_at: string
-  updated_at: string
-}
+  id: string;
+  landlord_id: string;
+  title: string;
+  description: string | null;
+  address: string;
+  rent_xlm: number;
+  bedrooms: number;
+  bathrooms: number;
+  latitude?: number;
+  longitude?: number;
+  is_available: boolean;
+  images: string[];
+  amenities: string[];
+  created_at: string;
+  updated_at: string;
+};
 
 export type Message = {
   id: string;

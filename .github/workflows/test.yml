@@ -1,37 +1,55 @@
-name: Test
+name: Unit Tests
 
 on:
   push:
-    branches: [main, develop]
+    branches:
+      - main
+      - develop
   pull_request:
-    branches: [main, develop]
+    branches:
+      - main
+      - develop
 
 jobs:
   test:
-    name: Run Tests
+    name: Run Unit Tests
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./apps/web
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: './apps/web/package-lock.json'
 
       - name: Install dependencies
         run: |
           npm ci
           cd apps/web && npm ci
 
+      - name: Run Jest tests with coverage
+        run: npm run test:coverage -- --ci
       - name: Run tests
         run: npm run test
 
-      # ── Codecov (uncomment when tests are in place) ──
-      # - name: Upload coverage to Codecov
-      #   uses: codecov/codecov-action@v4
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     fail_ci_if_error: false
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./apps/web/coverage
+          fail_ci_if_error: true
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jest-coverage-report
+          path: ./apps/web/coverage/
+          retention-days: 7

@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { RentContractService } from "@/services/rent-contract";
-import freighterApi from "@stellar/freighter-api";
+import { useWallet } from "@/hooks/useWallet";
+import { getFreighterPublicKey } from "@/lib/stellar/freighter";
 import { getStellarNetworkConfig } from "@/lib/stellar/network";
 import { getNetworkTransactionStatus } from "@/lib/stellar/contract-transactions";
 import { Loader2, AlertCircle, CheckCircle2, Wallet, ArrowRight, ExternalLink } from "lucide-react";
@@ -65,6 +66,7 @@ export default function PaymentPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [paymentRecordId, setPaymentRecordId] = useState<string | null>(null);
   const [networkName, setNetworkName] = useState<string>("Testnet");
+  const { isConnected, publicKey: walletKey, connect } = useWallet();
 
   useEffect(() => {
     const config = getStellarNetworkConfig();
@@ -107,14 +109,8 @@ export default function PaymentPage() {
       setStatus("connecting");
       setError(null);
 
-      const isConnected = await freighterApi.isConnected();
       if (!isConnected) {
-        throw new Error("Freighter wallet not found. Please install it.");
-      }
-
-      const publicKey = await freighterApi.getPublicKey();
-      if (!publicKey) {
-        throw new Error("Could not retrieve public key.");
+        await connect();
       }
 
       // Show confirmation dialog
@@ -122,7 +118,7 @@ export default function PaymentPage() {
       setShowConfirm(true);
     } catch (e: any) {
       setStatus("failed");
-      setError(e.message);
+      setError(e.message || "Failed to connect wallet.");
     }
   };
 
@@ -132,7 +128,7 @@ export default function PaymentPage() {
     setError(null);
 
     try {
-      const publicKey = await freighterApi.getPublicKey();
+      const publicKey = walletKey || await getFreighterPublicKey();
       const networkConfig = getStellarNetworkConfig();
 
       // 1. Call Smart Contract

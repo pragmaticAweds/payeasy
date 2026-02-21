@@ -11,7 +11,11 @@
         "test": "vitest run",
         "deploy:contract": "tsx scripts/deploy.ts",
         "verify:contract": "tsx scripts/verify.ts",
-        "build:contract": "cd ../../contracts/rent-escrow && soroban contract build"
+        "build:contract": "cd ../../contracts/rent-escrow && soroban contract build",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
+        "test:perf": "jest __tests__/performance/ --passWithNoTests",
+        "lh:ci": "lhci autorun"
     },
     "dependencies": {
         "@hookform/resolvers": "^5.2.2",
@@ -23,6 +27,7 @@
         "@types/mapbox-gl": "^3.4.1",
         "@types/supercluster": "^7.1.3",
         "clsx": "^2.0.0",
+        "@upstash/redis": "^1.36.2",
         "jsonwebtoken": "^9.0.3",
         "lodash.debounce": "^4.0.8",
         "lucide-react": "^0.294.0",
@@ -41,7 +46,12 @@
         "zod": "^4.3.6"
     },
     "devDependencies": {
+        "@faker-js/faker": "^10.3.0",
+        "@lhci/cli": "^0.15.1",
+        "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.2",
+        "@testing-library/user-event": "^14.6.1",
+        "@types/jest": "^30.0.0",
         "@types/geojson": "^7946.0.16",
         "@types/jsonwebtoken": "^9.0.10",
         "@types/mapbox__point-geometry": "^0.1.4",
@@ -49,14 +59,18 @@
         "@types/react": "^18",
         "@types/react-dom": "^18",
         "autoprefixer": "^10.0.1",
+        "cross-env": "^10.1.0",
         "dotenv": "^17.3.1",
         "eslint": "^8",
         "eslint-config-next": "14.0.3",
         "eslint-config-prettier": "^10.1.8",
+        "jest": "^30.2.0",
+        "jest-environment-jsdom": "^30.2.0",
         "postcss": "^8",
         "prettier": "^3.8.1",
         "prettier-plugin-tailwindcss": "^0.5.14",
         "tailwindcss": "^3.3.0",
+        "ts-jest": "^29.4.6",
         "tsx": "^4.21.0",
         "typescript": "^5",
         "vitest": "^4.0.18"

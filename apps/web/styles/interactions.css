@@ -1,0 +1,333 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────
+   DESIGN TOKENS
+   ───────────────────────────────────────────── */
+:root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+
+    /* Timing */
+    --t-fast: 120ms;
+    --t-base: 220ms;
+    --t-slow: 380ms;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* subtle overshoot */
+
+    /* Colours */
+    --glow-blue: rgba(56, 189, 248, 0.35);
+    --glow-indigo: rgba(99, 102, 241, 0.30);
+}
+
+/* ─────────────────────────────────────────────
+   GLOBAL DEFAULTS
+   ───────────────────────────────────────────── */
+body {
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+}
+
+/* Remove outline flash on non-keyboard focus */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Keyboard focus ring – accessible & pretty */
+:focus-visible {
+    outline: 2px solid rgb(56 189 248 / 0.8);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+/* ─────────────────────────────────────────────
+   CURSOR
+   ───────────────────────────────────────────── */
+a,
+button,
+[role="button"],
+select,
+label[for],
+.interactive {
+    cursor: pointer;
+}
+
+/* ─────────────────────────────────────────────
+   BUTTONS  – .btn-primary / .btn-secondary
+   ───────────────────────────────────────────── */
+@layer components {
+
+    /* Base shared */
+    .btn {
+        @apply inline-flex items-center gap-2 rounded-lg font-semibold transition-all;
+        transition-property: background-color, border-color, color, box-shadow, transform, opacity;
+        transition-duration: var(--t-base);
+        transition-timing-function: var(--ease-out);
+        will-change: transform, box-shadow;
+    }
+
+    /* Primary – filled */
+    .btn-primary {
+        @apply btn px-6 py-3 bg-sky-500 text-white border border-sky-500;
+    }
+
+    .btn-primary:hover {
+        @apply bg-sky-400 border-sky-400;
+        box-shadow: 0 0 0 4px var(--glow-blue), 0 4px 20px rgba(56, 189, 248, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0) scale(0.97);
+        box-shadow: none;
+        transition-duration: var(--t-fast);
+    }
+
+    /* Secondary – outlined */
+    .btn-secondary {
+        @apply btn px-6 py-3 bg-transparent text-sky-400 border border-sky-700;
+    }
+
+    .btn-secondary:hover {
+        @apply bg-sky-950/60 border-sky-400 text-sky-300;
+        box-shadow: 0 0 0 3px var(--glow-blue);
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary:active {
+        transform: translateY(0) scale(0.97);
+        transition-duration: var(--t-fast);
+    }
+
+    /* Ghost / text */
+    .btn-ghost {
+        @apply btn px-4 py-2 text-slate-400 border border-transparent;
+    }
+
+    .btn-ghost:hover {
+        @apply text-white bg-white/5 border-white/10;
+    }
+
+}
+
+/* ─────────────────────────────────────────────
+   LINKS  – .link
+   ───────────────────────────────────────────── */
+@layer components {
+
+    .link {
+        @apply relative inline-block text-sky-400;
+        text-decoration: none;
+        transition: color var(--t-base) var(--ease-out);
+    }
+
+    /* Animated underline that grows from left */
+    .link::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 0;
+        height: 1.5px;
+        background: currentColor;
+        border-radius: 2px;
+        transition: width var(--t-base) var(--ease-out);
+    }
+
+    .link:hover {
+        @apply text-sky-300;
+    }
+
+    .link:hover::after {
+        width: 100%;
+    }
+
+}
+
+/* ─────────────────────────────────────────────
+   CARDS  – .card
+   ───────────────────────────────────────────── */
+@layer components {
+
+    .card {
+        @apply rounded-xl border border-neutral-800 bg-neutral-900/40 p-5 backdrop-blur-sm;
+        transition:
+            transform var(--t-base) var(--ease-out),
+            box-shadow var(--t-base) var(--ease-out),
+            border-color var(--t-base) var(--ease-out),
+            background var(--t-base) var(--ease-out);
+        will-change: transform, box-shadow;
+    }
+
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow:
+            0 12px 40px rgba(0, 0, 0, 0.45),
+            0 0 0 1px rgba(56, 189, 248, 0.15),
+            0 0 30px rgba(56, 189, 248, 0.06);
+        @apply border-neutral-700 bg-neutral-900/60;
+    }
+
+    .card:active {
+        transform: translateY(-2px);
+        transition-duration: var(--t-fast);
+    }
+
+    /* Clickable card variant */
+    .card-link {
+        @apply card cursor-pointer;
+    }
+
+}
+
+/* ─────────────────────────────────────────────
+   ICON ANIMATIONS
+   ───────────────────────────────────────────── */
+@layer utilities {
+
+    /* Slide-right arrow (the -&gt; pattern in the homepage) */
+    .icon-slide {
+        @apply inline-block;
+        transition: transform var(--t-base) var(--ease-spring);
+    }
+
+    .group:hover .icon-slide,
+    *:hover>.icon-slide {
+        transform: translateX(5px);
+    }
+
+    /* Spin on hover */
+    .icon-spin {
+        @apply inline-block;
+        transition: transform var(--t-slow) var(--ease-out);
+    }
+
+    .group:hover .icon-spin,
+    *:hover>.icon-spin {
+        transform: rotate(180deg);
+    }
+
+    /* Scale pop */
+    .icon-pop {
+        @apply inline-block;
+        transition: transform var(--t-base) var(--ease-spring);
+    }
+
+    .group:hover .icon-pop,
+    *:hover>.icon-pop {
+        transform: scale(1.25);
+    }
+
+    /* Bounce */
+    .icon-bounce {
+        @apply inline-block;
+        transition: transform var(--t-base) var(--ease-spring);
+    }
+
+    .group:hover .icon-bounce,
+    *:hover>.icon-bounce {
+        animation: bounce-once 0.45s var(--ease-spring) forwards;
+    }
+
+}
+
+@keyframes bounce-once {
+    0% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-6px);
+    }
+
+    70% {
+        transform: translateY(2px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* ─────────────────────────────────────────────
+   SMOOTH TRANSITIONS – utility class
+   ───────────────────────────────────────────── */
+@layer utilities {
+
+    /* Apply to any element that needs a standard all-property transition */
+    .transition-smooth {
+        transition: all var(--t-base) var(--ease-out);
+    }
+
+    .transition-fast {
+        transition: all var(--t-fast) var(--ease-out);
+    }
+
+    .transition-slow {
+        transition: all var(--t-slow) var(--ease-out);
+    }
+}
+
+/* ─────────────────────────────────────────────
+   INPUT / FORM FIELDS
+   ───────────────────────────────────────────── */
+@layer components {
+    .input {
+        @apply rounded-lg border border-neutral-700 bg-neutral-900 px-4 py-2.5 text-white placeholder:text-neutral-500;
+        transition:
+            border-color var(--t-base) var(--ease-out),
+            box-shadow var(--t-base) var(--ease-out);
+    }
+
+    .input:focus {
+        @apply border-sky-500 outline-none;
+        box-shadow: 0 0 0 3px var(--glow-blue);
+    }
+
+    .input:hover:not(:focus) {
+        @apply border-neutral-500;
+    }
+}
+
+/* ─────────────────────────────────────────────
+   BADGE / PILL
+   ───────────────────────────────────────────── */
+@layer components {
+    .badge {
+        @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-sky-900/40 text-sky-300 border border-sky-800;
+        transition: background-color var(--t-base), box-shadow var(--t-base);
+    }
+
+    .badge:hover {
+        @apply bg-sky-900/70;
+        box-shadow: 0 0 0 3px var(--glow-blue);
+    }
+}
+
+/* ─────────────────────────────────────────────
+   PERFORMANCE SAFEGUARDS
+   ───────────────────────────────────────────── */
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Contain paint for animated elements (keeps animations on GPU) */
+.card,
+.btn,
+.link,
+[class*="icon-"] {
+    contain: style;
+}

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { errorResponse, getUserId } from '@/lib/api-utils';
-import { upstashGet, upstashSet } from '../../../lib/recommendation/cache';
+import { upstashGet, upstashSet } from '@/lib/recommendation/cache';
 
 import { createClient } from '@/lib/supabase/server';
-import { getRecommendations } from '../../../lib/recommendation/engine';
+import { getRecommendations } from '@/lib/recommendation/engine';
 
 export async function GET (request: NextRequest) {
     const supabase = createClient();

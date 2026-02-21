@@ -1,3 +1,19 @@
+/**
+ * @file messages.ts
+ * @description Message validation using enhanced security validation
+ * 
+ * Updated to use centralized validation schemas for better security
+ * with HTML sanitization and injection attack prevention.
+ */
+
+import { z } from 'zod';
+import {
+  messageContentSchema,
+  uuidSchema,
+  paginationSchema,
+  validateInput,
+} from '../validation/input';
+
 const MIN_CONTENT_LENGTH = 1;
 const MAX_CONTENT_LENGTH = 5000;
 const DEFAULT_PAGE_SIZE = 20;
@@ -20,8 +36,22 @@ export interface ValidatedPagination {
 }
 
 /**
+ * Zod schema for message sending with enhanced security
+ */
+const sendMessageSchema = z.object({
+  content: messageContentSchema,
+  recipientId: uuidSchema,
+});
+
+/**
  * Validates the body of a POST /api/messages/send request.
  * Returns either a validated payload or an array of errors.
+ * 
+ * Now with enhanced security:
+ * - HTML sanitization
+ * - XSS prevention
+ * - Length validation
+ * - Format validation
  */
 export function validateSendMessage(
   body: Record<string, unknown>,
@@ -29,30 +59,21 @@ export function validateSendMessage(
 ): { data?: ValidatedSendMessage; errors?: ValidationError[] } {
   const errors: ValidationError[] = [];
 
-  // --- content ---
-  const content = typeof body.content === "string" ? body.content.trim() : undefined;
-  if (!content) {
-    errors.push({ field: "content", message: "Content is required." });
-  } else if (content.length < MIN_CONTENT_LENGTH) {
-    errors.push({
-      field: "content",
-      message: `Content must be at least ${MIN_CONTENT_LENGTH} character(s).`,
+  // Validate with enhanced schemas
+  const validation = validateInput(sendMessageSchema, body);
+
+  if (!validation.success) {
+    // Convert Zod errors to ValidationError format
+    Object.entries(validation.errors).forEach(([field, message]) => {
+      errors.push({ field, message });
     });
-  } else if (content.length > MAX_CONTENT_LENGTH) {
-    errors.push({
-      field: "content",
-      message: `Content must be at most ${MAX_CONTENT_LENGTH} characters.`,
-    });
+    return { errors };
   }
 
-  // --- recipientId ---
-  const recipientId = typeof body.recipientId === "string" ? body.recipientId.trim() : undefined;
-  if (!recipientId) {
-    errors.push({
-      field: "recipientId",
-      message: "Recipient ID is required.",
-    });
-  } else if (recipientId === senderId) {
+  const { content, recipientId } = validation.data;
+
+  // Additional business logic validation
+  if (recipientId === senderId) {
     errors.push({
       field: "recipientId",
       message: "You cannot send a message to yourself.",
@@ -63,11 +84,13 @@ export function validateSendMessage(
     return { errors };
   }
 
-  return { data: { recipientId: recipientId!, content: content! } };
+  return { data: { recipientId, content } };
 }
 
 /**
  * Validates and normalizes pagination query parameters.
+ * 
+ * Now with enhanced validation for security.
  */
 export function validatePagination(params: { page?: string | null; pageSize?: string | null }): {
   data?: ValidatedPagination;

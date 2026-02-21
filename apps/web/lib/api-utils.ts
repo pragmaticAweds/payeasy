@@ -1,18 +1,18 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest } from "next/server";
 import { verifyJwt } from "@/lib/auth/stellar-auth";
 
 /**
  * Build a successful JSON response.
  */
 export function successResponse<T>(data: T, status = 200) {
-  return NextResponse.json({ success: true, data }, { status });
+  return Response.json({ success: true, data }, { status });
 }
 
 /**
  * Build an error JSON response.
  */
 export function errorResponse(message: string, status = 400, code?: string) {
-  return NextResponse.json(
+  return Response.json(
     { success: false, error: { message, ...(code && { code }) } },
     { status }
   );

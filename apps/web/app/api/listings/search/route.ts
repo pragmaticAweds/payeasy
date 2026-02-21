@@ -21,13 +21,20 @@ export async function GET(request: NextRequest) {
           .split(",")
           .map((a) => a.trim())
         : undefined,
-      search: searchParams.get('search') || undefined,
-      bbox: searchParams.get('bbox') || undefined,
-      sortBy: (searchParams.get('sortBy') as 'price' | 'created_at' | 'bedrooms' | 'bathrooms') || 'created_at',
-      order: (searchParams.get('order') as 'asc' | 'desc') || 'desc',
-      page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
-      limit: searchParams.get('limit') ? Number(searchParams.get('limit')) : 20,
-    }
+      search: searchParams.get("search") || undefined,
+      sortBy:
+        (searchParams.get("sortBy") as
+          | "price"
+          | "created_at"
+          | "bedrooms"
+          | "bathrooms"
+          | "views"
+          | "favorites"
+          | "recommended") || "created_at",
+      order: (searchParams.get("order") as "asc" | "desc") || "desc",
+      page: searchParams.get("page") ? Number(searchParams.get("page")) : 1,
+      limit: searchParams.get("limit") ? Number(searchParams.get("limit")) : 20,
+    };
 
     if (params.page! < 1) params.page = 1
     if (params.limit! < 1 || params.limit! > 100) params.limit = 20
@@ -83,21 +90,20 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Bounding box filtering for map view
-    if (params.bbox) {
-      const coords = params.bbox.split(',').map(Number)
-      if (coords.length === 4 && coords.every((c: number) => !isNaN(c))) {
-        const [west, south, east, north] = coords
-        query = query
-          .gte('longitude', west)
-          .lte('longitude', east)
-          .gte('latitude', south)
-          .lte('latitude', north)
-      }
-    }
+    if (params.sortBy === "recommended") {
+      // Recommended algorithm: Most favorites first, then most views
+      query = query
+        .order("favorite_count", { ascending: false })
+        .order("view_count", { ascending: false })
+        .order("created_at", { ascending: false });
+    } else {
+      let sortColumn: any = params.sortBy || "created_at";
+      if (params.sortBy === "price") sortColumn = "rent_xlm";
+      if (params.sortBy === "views") sortColumn = "view_count";
+      if (params.sortBy === "favorites") sortColumn = "favorite_count";
 
-    const sortColumn = params.sortBy === 'price' ? 'rent_xlm' : (params.sortBy || 'created_at')
-    query = query.order(sortColumn, { ascending: params.order === 'asc' })
+      query = query.order(sortColumn, { ascending: params.order === "asc" });
+    }
 
     const offset = (params.page! - 1) * params.limit!;
     query = query.range(offset, offset + params.limit! - 1);

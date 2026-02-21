@@ -4,7 +4,7 @@ import type {
   MessageWithSender,
   PaymentRecord,
   RentAgreement,
-} from "@/lib/types/database";
+} from "@/lib/types/supabase";
 
 // ── Listings ─────────────────────────────────────────────
 
@@ -78,7 +78,7 @@ export async function getThread(userId: string, otherUserId: string, listingId?:
     .select("*")
     .or(
       `and(sender_id.eq.${userId},receiver_id.eq.${otherUserId}),` +
-        `and(sender_id.eq.${otherUserId},receiver_id.eq.${userId})`
+      `and(sender_id.eq.${otherUserId},receiver_id.eq.${userId})`
     )
     .order("created_at", { ascending: true });
 

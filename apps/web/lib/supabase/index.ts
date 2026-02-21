@@ -18,19 +18,24 @@
 // Client (browser)
 export {
   createBrowserClient,
+  createClient,
   getSupabaseClient,
   resetClientInstance,
 } from './client'
 
 // Server (API routes, Server Components)
 export {
-  createServerClient,
-  createAdminClient,
-  getAdminClient,
-  resetAdminClientInstance,
+  createClient as createServerClient,
   getCurrentUser,
   getCurrentSession,
 } from './server'
+
+// Admin
+export {
+  createAdminClient,
+  getAdminClient,
+  resetAdminClientInstance,
+} from './admin'
 
 // Middleware
 export {

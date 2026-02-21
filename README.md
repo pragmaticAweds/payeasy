@@ -6,6 +6,7 @@ PayEasy is an open-source platform built on the Stellar blockchain that makes fi
 
 [![Stellar](https://img.shields.io/badge/Stellar-Soroban-7D00FF?style=flat&logo=stellar)](https://stellar.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![codecov](https://codecov.io/gh/Ogstevyn/payeasy/graph/badge.svg)](https://codecov.io/gh/Ogstevyn/payeasy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 ---
@@ -151,6 +152,28 @@ payeasy/
    ```
 
 For detailed setup instructions, see [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+---
+
+## E2E Testing
+
+PayEasy uses [Playwright](https://playwright.dev/) for end-to-end testing.
+
+```bash
+# Install Playwright browsers (first time)
+npx playwright install
+
+# Run all E2E tests
+npm run test:e2e
+
+# Run with interactive UI
+npm run test:e2e:ui
+```
+
+Tests cover the following user flows:
+- **Auth** — login form, registration, validation, navigation
+- **Listings** — browse page, filters, view toggle, search
+- **Messages** — conversation rendering, sending, error handling
 
 ---
 

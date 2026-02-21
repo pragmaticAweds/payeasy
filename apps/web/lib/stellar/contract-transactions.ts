@@ -109,10 +109,7 @@ function createSorobanServer(rpcUrl: string) {
   });
 }
 
-function extractGasFromSimulation(simulation: {
-  minResourceFee?: string | number;
-  transactionData?: unknown;
-}): GasEstimate | null {
+function extractGasFromSimulation(simulation: any): GasEstimate | null {
   const minResourceFee = Number(simulation.minResourceFee ?? 0);
   if (!Number.isFinite(minResourceFee) || minResourceFee <= 0) {
     return null;
@@ -120,20 +117,20 @@ function extractGasFromSimulation(simulation: {
 
   const transactionData = simulation.transactionData as
     | {
-        resources?: () => {
-          instructions?: () => unknown;
-          readBytes?: () => unknown;
-          writeBytes?: () => unknown;
-        };
-      }
+      resources?: () => {
+        instructions?: () => unknown;
+        readBytes?: () => unknown;
+        writeBytes?: () => unknown;
+      };
+    }
     | undefined;
 
   return {
     stroops: minResourceFee,
     source: "simulateTransaction",
-    cpuInstructions: Number(transactionData?.resources?.()?.instructions?.() ?? 0),
-    readBytes: Number(transactionData?.resources?.()?.readBytes?.() ?? 0),
-    writeBytes: Number(transactionData?.resources?.()?.writeBytes?.() ?? 0),
+    cpuInstructions: Number((transactionData as any)?.resources?.()?.instructions?.() ?? 0),
+    readBytes: Number((transactionData as any)?.resources?.()?.readBytes?.() ?? 0),
+    writeBytes: Number((transactionData as any)?.resources?.()?.writeBytes?.() ?? 0),
   };
 }
 
@@ -226,8 +223,8 @@ export async function buildContractTransaction(
       : typeof prepareTransaction === "function"
         ? await prepareTransaction(initialTransaction)
         : (() => {
-            throw new Error("Soroban transaction assembly is unavailable for this stellar-sdk version.");
-          })();
+          throw new Error("Soroban transaction assembly is unavailable for this stellar-sdk version.");
+        })();
 
   return {
     unsignedXdr: preparedTransaction.toXDR(),
@@ -244,9 +241,9 @@ export async function signContractTransaction(
   networkPassphrase: string
 ): Promise<string> {
   try {
-    const signed = await freighterSignTransaction(unsignedXdr, {
+    const signed = (await freighterSignTransaction(unsignedXdr, {
       networkPassphrase,
-    });
+    })) as string | { error?: string; signedTxXdr?: string };
 
     if (typeof signed === "string") {
       return signed;

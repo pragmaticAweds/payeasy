@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { getClient } from '@/lib/supabase/client'
+import { createBrowserClient } from '@/lib/supabase/client'
 import type { PostgrestError } from '@supabase/supabase-js'
 
 /**
@@ -20,7 +21,7 @@ export function useSupabaseQuery<T>(
     const fetchData = async () => {
       try {
         setLoading(true)
-        const supabase = getClient()
+        const supabase = createBrowserClient()
         let q = supabase.from(table).select()
 
         if (query) {
@@ -48,6 +49,7 @@ export function useSupabaseQuery<T>(
     }
 
     fetchData()
+  }, dependencies)
   }, [table, query, ...(dependencies ?? [])])
 
   return { data, loading, error }
@@ -129,4 +131,6 @@ export function useSupabaseDelete(table: string) {
   }
 
   return { delete: delete_, loading, error }
+}
+}
 }

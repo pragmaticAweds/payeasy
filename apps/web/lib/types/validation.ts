@@ -227,23 +227,24 @@ export const paymentRecordUpdateSchema = paymentRecordInsertSchema
 // RentAgreement Schemas
 // ──────────────────────────────────────────────────────────────
 
-export const rentAgreementInsertSchema = z
-  .object({
-    id: uuidSchema.optional(),
-    listing_id: uuidSchema,
-    landlord_id: uuidSchema,
-    contract_id: z.string().optional().nullable(),
-    tenant_ids: z
-      .array(uuidSchema)
-      .min(1, 'At least one tenant is required')
-      .max(20, 'Cannot have more than 20 tenants'),
-    rent_xlm: z.number().positive('Rent must be a positive number').finite(),
-    start_date: isoDateSchema,
-    end_date: isoDateSchema.optional().nullable(),
-    status: z
-      .enum(['draft', 'active', 'completed', 'cancelled'])
-      .default('draft'),
-  })
+const rentAgreementBaseSchema = z.object({
+  id: uuidSchema.optional(),
+  listing_id: uuidSchema,
+  landlord_id: uuidSchema,
+  contract_id: z.string().optional().nullable(),
+  tenant_ids: z
+    .array(uuidSchema)
+    .min(1, 'At least one tenant is required')
+    .max(20, 'Cannot have more than 20 tenants'),
+  rent_xlm: z.number().positive('Rent must be a positive number').finite(),
+  start_date: isoDateSchema,
+  end_date: isoDateSchema.optional().nullable(),
+  status: z
+    .enum(['draft', 'active', 'completed', 'cancelled'])
+    .default('draft'),
+})
+
+export const rentAgreementInsertSchema = rentAgreementBaseSchema
   .refine(
     (data) =>
       data.end_date == null ||
@@ -251,24 +252,32 @@ export const rentAgreementInsertSchema = z
     { message: 'End date must be after start date', path: ['end_date'] },
   )
 
-export const rentAgreementUpdateSchema = rentAgreementInsertSchema
+export const rentAgreementUpdateSchema = rentAgreementBaseSchema
   .omit({ id: true, listing_id: true, landlord_id: true })
   .partial()
+  .refine(
+    (data) =>
+      !data.end_date ||
+      !data.start_date ||
+      new Date(data.end_date) > new Date(data.start_date),
+    { message: 'End date must be after start date', path: ['end_date'] },
+  )
 
 // ──────────────────────────────────────────────────────────────
 // Conversation Schemas
 // ──────────────────────────────────────────────────────────────
 
-export const conversationInsertSchema = z
-  .object({
-    id: uuidSchema.optional(),
-    user1_id: uuidSchema,
-    user2_id: uuidSchema,
-    listing_id: uuidSchema.optional().nullable(),
-    last_message: z.string().optional().nullable(),
-    last_message_at: isoTimestampSchema.optional().nullable(),
-    last_message_sender: uuidSchema.optional().nullable(),
-  })
+const conversationBaseSchema = z.object({
+  id: uuidSchema.optional(),
+  user1_id: uuidSchema,
+  user2_id: uuidSchema,
+  listing_id: uuidSchema.optional().nullable(),
+  last_message: z.string().optional().nullable(),
+  last_message_at: isoTimestampSchema.optional().nullable(),
+  last_message_sender: uuidSchema.optional().nullable(),
+})
+
+export const conversationInsertSchema = conversationBaseSchema
   .refine((data) => data.user1_id !== data.user2_id, {
     message: 'Users cannot have a conversation with themselves',
     path: ['user2_id'],
@@ -278,7 +287,7 @@ export const conversationInsertSchema = z
     path: ['user1_id'],
   })
 
-export const conversationUpdateSchema = conversationInsertSchema
+export const conversationUpdateSchema = conversationBaseSchema
   .omit({ id: true, user1_id: true, user2_id: true })
   .partial()
 

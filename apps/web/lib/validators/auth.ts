@@ -1,19 +1,37 @@
-import { z } from 'zod';
+/**
+ * @file auth.ts
+ * @description Authentication validation schemas using centralized validation
+ * 
+ * This file uses the shared validation schemas from lib/validation/input.ts
+ * to ensure consistent validation and security across the application.
+ */
 
+import { z } from 'zod';
+import {
+  emailSchema,
+  usernameSchema,
+  passwordSchema,
+  optionalStellarPublicKeySchema,
+} from '../validation/input';
+
+/**
+ * Login form validation schema
+ * Uses enhanced validation with HTML sanitization and stronger password requirements
+ */
 export const loginSchema = z.object({
-  email: z.string().email({ message: 'Invalid email address' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+  email: emailSchema,
+  password: passwordSchema,
 });
 
+/**
+ * Registration form validation schema
+ * Uses enhanced validation with stronger security requirements
+ */
 export const registerSchema = z.object({
-  username: z
-    .string()
-    .min(3, { message: 'Username must be at least 3 characters' })
-    .max(20, { message: 'Username must be less than 20 characters' })
-    .regex(/^[a-zA-Z0-9_]+$/, { message: 'Username can only contain letters, numbers, and underscores' }),
-  email: z.string().email({ message: 'Invalid email address' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-  walletAddress: z.string().optional(),
+  username: usernameSchema,
+  email: emailSchema,
+  password: passwordSchema,
+  walletAddress: optionalStellarPublicKeySchema,
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
